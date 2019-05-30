@@ -5,7 +5,7 @@ import chess.pgn
 def main():
     # pgn = open(sys.argv[1])
     pgn = io.StringIO(sys.argv[1])
-    user_move = chess.Move.from_uci(sys.argv[2].replace('\r', '').replace('\n', ''))
+    user_move = chess.Move.from_uci(sys.argv[2].replace('\r', '').replace('\n', '')).uci()
     prev_game = chess.pgn.read_game(pgn)
 
     board = chess.Board()
@@ -17,7 +17,8 @@ def main():
         board.push(move)
         node = node.add_variation(move)
 
-    if (user_move not in board.legal_moves): # invalid move
+    legal_uci_moves = [m.uci() for m in list(board.legal_moves)]
+    if (user_move not in legal_uci_moves): # invalid move
         print("That was not a legal move")
         sys.exit(1)
 

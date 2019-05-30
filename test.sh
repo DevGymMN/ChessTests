@@ -2,6 +2,9 @@
 
 engine_path=$1
 
+# create volume for testing
+docker volume create my-vol
+
 # docker build
 docker build -t test $engine_path
 if [ "$?" -ne "0" ]
@@ -23,7 +26,7 @@ pgn_example='[Site "Chess.com"]
  *'
 
 start=`date +%s`
-output=$(docker run -it -e pgn="$pgn_example" test)
+output=$(docker run -v my-vol:/workspace -e pgn="$pgn_example" --net=none test)
 echo $output
 echo "$?"
 if [ "$?" -ne "0" ]

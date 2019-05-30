@@ -22,10 +22,21 @@ pgn_example='[Site "Chess.com"]
 
  *'
 
+start=`date +%s`
 output=$(docker run -it -e pgn="$pgn_example" test)
+echo $output
+echo "$?"
 if [ "$?" -ne "0" ]
 then
-    echo `"docker run -it -e pgn=test $engine_path" failed`
+    echo "'docker run -it -e pgn=test $engine_path' failed"
+    exit 1
+fi
+end=`date +%s`
+runtime=$((end-start))
+echo "$runtime"
+if [ "$runtime" -gt "30" ]
+then
+    echo "Script took $runtime seconds, limit is 30 seconds"
     exit 1
 fi
 
@@ -33,7 +44,7 @@ fi
 python3 validator.py "$pgn_example" "$output"
 if [ "$?" -ne "0" ]
 then
-    echo `Returned move ("$output") was invalid`
+    echo "Returned move ( $output ) was invalid"
     exit 1
 fi
 
